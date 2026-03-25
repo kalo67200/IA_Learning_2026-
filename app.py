@@ -40,6 +40,7 @@ def accueil():
     html += "</form><ul>"
     html+= "<a href='/stats'>📊 Voir les stats</a><br><br>"
     html += "<a href='/brief'>🤖 Brief IA</a><br><br>"
+    html += "<a href='/analyse'>📈 Analyse de productivité</a><br><br>"
 
 
 
@@ -107,6 +108,50 @@ def stats():
     html += "</body></html>"
     return html
     
+@app.route("/analyse")
+def analyse():
+    try:
+        with open(FICHIER,"r")as f :
+            taches = json.load(f)
+    except :
+        taches = []
+
+    dates_uniques = set([t["date"] for t in taches])
+    resultats = {}
+    for date in dates_uniques:
+        taches_du_jour = [t for t in taches if t["date"] == date]
+        total = len(taches_du_jour)
+        faites = len([t for t in taches_du_jour if t["faite"]])
+        resultats[date] = round((faites/total)*100,2) if total > 0 else 0
+    
+    meilleur_jour = max(resultats,key= resultats.get) if resultats else "Pas encore de données "
+
+    html="""<html><head><style>
+        body {font-family : Arial ; max-width: 600px ; margin: 50px auto; background: #0B0F19; color: white;}
+        h1{ color: #00F0FF; }
+        .jour { background: #1a1f2e; padding: 15px; margin: 8px 0; border-radius: 8px;}
+        .meilleur { border : 2px solid #FF007F; }
+        a { color: #FF007F; }
+    </style></head><body>"""
+    html += "<h1> Analyse de productivité </h1>"
+
+    for date, taux in sorted(resultats.items()):
+        classe  = "jour meilleur" if date == meilleur_jour else "jour"
+        html += f"<div class ='{classe}'>{date} → {taux}%</div>"
+
+    html += f"<br><div class='jour meilleur'>🏆 Meilleur jour : {meilleur_jour}</div>"
+    html += "<br><a href='/'>← Retour</a>"
+    html += "</body></html>"
+    return html
+
+    
+    
+
+
+
+
+
+
 
 
 @app.route("/brief")
@@ -121,10 +166,9 @@ def brief():
         model="claude-haiku-4-5-20251001",
         max_tokens=150,
         messages=[
-            {"role": "user", "content": f"Voici la liste des tâches : {taches}. Fais un résumé en 3 points."}
+    {"role": "user", "content": f"tâches : {', '.join([t['titre'] + (' ✅' if t['faite'] else ' ⬜') for t in taches])}. Brief motivant en 2 lignes max."}
         ]
     )
-    
     brief_text = message.content[0].text
 
 
