@@ -1,3 +1,4 @@
+
 class Valeur : 
     def __init__(self, data): 
         self.data = data
@@ -16,19 +17,27 @@ class Valeur :
         resultat.backward = backward
         return resultat 
 
+    def __mul__(self, autre):
+        resultat = Valeur(self.data * autre.data)
     
-    def __mul__(self,autre):
-        return Valeur(self.data * autre.data)
+        def backward():
+            self.grad += autre.data
+            autre.grad += self.data
     
+        resultat.backward = backward
+        return resultat
+
+
 
 a = Valeur(2.0)
 b = Valeur(3.0)
-c = a + b 
-d = a * b 
 
-print (c)
-print (d)
-
+c = a + b
 c.backward()
-print(f"Gradient de a : {a.grad}")
-print(f"Gradient de b : {b.grad}")
+print(f"Addition - gradient a : {a.grad}, b : {b.grad}")
+a.grad = 0.0
+b.grad = 0.0
+
+d = a * b
+d.backward()
+print(f"Multiplication - gradient a : {a.grad}, b : {b.grad}")
