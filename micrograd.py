@@ -41,3 +41,19 @@ b.grad = 0.0
 d = a * b
 d.backward()
 print(f"Multiplication - gradient a : {a.grad}, b : {b.grad}")
+
+x = Valeur(2.0)
+w = Valeur(0.5)
+b = Valeur(1.0)
+
+output = w * x + b 
+print(f"output: {output}")
+
+temp = w * x      
+output = temp + b  
+
+output.backward()  
+temp.backward()    
+print(f"Gradient de w : {w.grad}")
+print(f"Gradient de x : {x.grad}")
+print(f"Gradient de b : {b.grad}")
