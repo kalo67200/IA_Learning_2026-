@@ -20,4 +20,40 @@ for mot in mots :
 top5 = sorted (compteur.items(),key = lambda x : x[1], reverse = True )[:5]
 for paire, count in top5 : 
     print(f"{paire[0]} -> {paire[1]} : {count} fois ")
+
+
+total_a = sum(count for (ch1, ch2), count in compteur.items() if ch1 == 'a')
+
+print(f"\nProbabilités après 'a' :")
+probs_a = {}
+for (ch1, ch2), count in compteur.items():
+    if ch1 == 'a':
+        probs_a[ch2] = count / total_a
+
+top_a = sorted(probs_a.items(), key=lambda x: x[1], reverse=True)[:5]
+for lettre, prob in top_a:
+    print(f"  a → {lettre} : {prob:.3f}")
+
+
+
+
+import random 
+
+def generer_prenom():
+    lettre = random.choice(list(lettres))
+    prenom = lettre
+
+    for _ in range(10):
+        candidats = [(ch2, count) for (ch1, ch2), count in compteur.items() if ch1 == lettre ]
+        if not candidats : 
+            break 
+        total = sum(c for _, c in candidats)
+        probs =[ c /total for _, c in candidats]
+        lettres_next = [c for c, _ in candidats]
+        lettre = random.choices(lettres_next, weights=probs)[0]
+        prenom += lettre 
     
+    return prenom   
+
+for _ in range (5): 
+    print (generer_prenom())
