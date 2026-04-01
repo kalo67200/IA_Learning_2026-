@@ -9,3 +9,4 @@ tableau = np.array([
 
 print(tableau[0])  
 print(tableau[ :, 0])  
+
