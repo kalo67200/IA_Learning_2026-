@@ -14,7 +14,8 @@ for mot in mots [:3]:
 
 compteur = {}
 for mot in mots :
-    for ch1 , ch2  in zip(mot, mot[1:]):
+    mot_avec_tokens = '.' + mot + '.'
+    for ch1 , ch2  in zip(mot_avec_tokens, mot_avec_tokens[1:]):
         paire  =(ch1, ch2 )
         compteur [paire] = compteur.get (paire, 0) + 1 
 top5 = sorted (compteur.items(),key = lambda x : x[1], reverse = True )[:5]
@@ -40,20 +41,22 @@ for lettre, prob in top_a:
 import random 
 
 def generer_prenom():
-    lettre = random.choice(list(lettres))
-    prenom = lettre
-
-    for _ in range(10):
-        candidats = [(ch2, count) for (ch1, ch2), count in compteur.items() if ch1 == lettre ]
-        if not candidats : 
-            break 
+    lettre = '.'
+    prenom = ''
+    
+    while True:
+        candidats = [(ch2, count) for (ch1, ch2), count in compteur.items() if ch1 == lettre]
+        if not candidats:
+            break
         total = sum(c for _, c in candidats)
-        probs =[ c /total for _, c in candidats]
+        probs = [c/total for _, c in candidats]
         lettres_next = [c for c, _ in candidats]
         lettre = random.choices(lettres_next, weights=probs)[0]
-        prenom += lettre 
+        if lettre == '.':
+            break
+        prenom += lettre
     
-    return prenom   
+    return prenom
 
 for _ in range (5): 
     print (generer_prenom())
