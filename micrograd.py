@@ -11,8 +11,8 @@ class Valeur :
         resultat = Valeur(self.data + autre.data)
 
         def backward():
-            self.grad += 1.0
-            autre.grad += 1.0
+            self.grad += 1.0* resultat.grad
+            autre.grad += 1.0 * resultat.grad 
         
         resultat.backward = backward
         return resultat 
@@ -21,26 +21,12 @@ class Valeur :
         resultat = Valeur(self.data * autre.data)
     
         def backward():
-            self.grad += autre.data
-            autre.grad += self.data
+            self.grad += autre.data * resultat.grad
+            autre.grad += self.data * resultat.grad 
     
         resultat.backward = backward
         return resultat
 
-
-
-a = Valeur(2.0)
-b = Valeur(3.0)
-
-c = a + b
-c.backward()
-print(f"Addition - gradient a : {a.grad}, b : {b.grad}")
-a.grad = 0.0
-b.grad = 0.0
-
-d = a * b
-d.backward()
-print(f"Multiplication - gradient a : {a.grad}, b : {b.grad}")
 
 x = Valeur(2.0)
 w = Valeur(0.5)
@@ -51,9 +37,12 @@ print(f"output: {output}")
 
 temp = w * x      
 output = temp + b  
+output.grad = 1.0 
 
 output.backward()  
 temp.backward()    
 print(f"Gradient de w : {w.grad}")
 print(f"Gradient de x : {x.grad}")
 print(f"Gradient de b : {b.grad}")
+
+
