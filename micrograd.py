@@ -3,6 +3,8 @@ class Valeur :
     def __init__(self, data): 
         self.data = data
         self.grad = 0.0
+        self.backward = lambda : None 
+        self._prev = set()
     
     def __repr__(self):
         return f"Valeur (date = {self.data}, grad ={self.grad})"
@@ -18,8 +20,9 @@ class Valeur :
         return resultat 
 
     def __mul__(self, autre):
-        resultat = Valeur(self.data * autre.data)
-    
+        resultat = Valeur(self.data * autre.data) 
+        resultat._prev = {self, autre}
+        
         def backward():
             self.grad += autre.data * resultat.grad
             autre.grad += self.data * resultat.grad 
