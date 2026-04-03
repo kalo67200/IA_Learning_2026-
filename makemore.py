@@ -60,3 +60,33 @@ def generer_prenom():
 
 for _ in range (5): 
     print (generer_prenom())
+
+
+
+import torch 
+
+chars = sorted(list(set(''.join(mots))))
+chars = ['.']+ chars 
+vocab_size = len(chars)
+char_to_idx = {c: i for i, c in enumerate(chars)}
+idx_to_char = {i: c for i, c in enumerate(chars)}
+
+print(f" Taille du vocabulaire : {vocab_size}")
+print(f"Exemple : 'a' -> {char_to_idx['a']}" )
+
+
+xs = []
+ys = []
+
+for mot in mots :
+    mot_avec_tokens = '.' + mot +'.'
+    for ch1, ch2 in zip(mot_avec_tokens, mot_avec_tokens[1:]):
+        xs.append(char_to_idx[ch1])
+        ys.append(char_to_idx[ch2])
+
+xs = torch.tensor(xs)
+ys = torch.tensor(ys)
+
+print(f"Nombre d'exemples : {len(xs)}")
+print (f"premier inputs : {xs[:5]}")
+print(f" Premier Outputs : {ys[:5]}")
