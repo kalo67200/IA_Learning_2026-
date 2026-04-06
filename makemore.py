@@ -90,3 +90,42 @@ ys = torch.tensor(ys)
 print(f"Nombre d'exemples : {len(xs)}")
 print (f"premier inputs : {xs[:5]}")
 print(f" Premier Outputs : {ys[:5]}")
+
+
+
+import torch.nn.functional as F 
+
+W = torch.randn((27,27), requires_grad= True )
+
+
+for k in range(100):
+    xenc = F.one_hot(xs, num_classes=27).float()
+    logits = xenc @ W 
+    counts = logits.exp()
+    probs = counts / counts.sum(1, keepdim=True)
+    loss = -probs[torch.arange(len(xs)),ys].log().mean()
+
+    W.grad = None 
+    loss.backward()
+
+
+    W.data += -50* W.grad 
+
+    if k % 10 == 0: 
+        print (f"Etape {k} : loss = {loss.item(): .4f}")
+
+
+
+for _ in range (5):
+    prenom = ' '
+    idx = 0 
+    while True : 
+        xenc = F.one_hot(torch.tensor([idx]), num_classes=27).float()
+        logits = xenc @ W
+        counts = logits.exp()
+        probs = counts / counts.sum(1, keepdim=True)
+        idx = torch.multinomial(probs, num_samples=1).item()
+        if idx == 0:
+            break 
+        prenom += idx_to_char[idx]
+    print(prenom)
