@@ -125,7 +125,7 @@ for _ in range (5):
         counts = logits.exp()
         probs = counts / counts.sum(1, keepdim=True)
         idx = torch.multinomial(probs, num_samples=1).item()
-        if idx == 0:
+        if idx ==0:
             break 
-        prenom += idx_to_char[idx]
+        prenom +=idx_to_char[idx]
     print(prenom)
